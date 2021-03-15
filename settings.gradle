@@ -1,0 +1,4 @@
+include ':base-simple'
+include ':usb-simple'
+include ':app'
+rootProject.name = "DevdanSimple"
