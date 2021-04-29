@@ -101,22 +101,26 @@ class AlcodiDriver(val device: UsbDevice) : BaseDriver<AlcodiData>(device) {
                 if (readBytes == AlcodiProtocol.RECEIVE_BYTE_SIZE) {
                     val serialLow = buffer[AlcodiProtocol.INDEX_SERIAL_LOW]
                     val serialMiddle = buffer[AlcodiProtocol.INDEX_SERIAL_MIDDLE]
-                    val serialHigh = buffer[AlcodiProtocol.INDEX_SERIAL_HIGH]
+                    val serialProd = buffer[AlcodiProtocol.INDEX_SERIAL_HIGH]
                     val serialVendor = buffer[AlcodiProtocol.INDEX_SERIAL_VENDOR]
-
-                    val serialNumber = AlcodiProtocol.fetchSerialNumber(
-                        serialLow,
-                        serialMiddle,
-                        serialHigh,
-                        serialVendor
-                    )
 
                     val countryCode = AlcodiProtocol.fetchCountryCode(
                         buffer[AlcodiProtocol.INDEX_COUNTRY_CODE_LOW],
                         buffer[AlcodiProtocol.INDEX_COUNTRY_CODE_HIGH]
                     )
+
                     val modelNumber = buffer[AlcodiProtocol.INDEX_MODEL_NUMBER].toPositiveInt()
                     val productCode = buffer[AlcodiProtocol.INDEX_PRODUCT_CODE].toChar()
+                    val serialNumber = AlcodiProtocol.fetchSerialNumber(
+                        serialLow,
+                        serialMiddle
+                    )
+                    val productionNumber = AlcodiProtocol.fetchProductionNumber(serialProd)
+                    val vendorYear = AlcodiProtocol.fetchVendorYear(serialVendor)
+                    //A 01 KR193200274
+                    val serial =
+                        "$productCode$modelNumber$countryCode$vendorYear$productionNumber$serialNumber"
+
 
                     val releaseDate = AlcodiProtocol.fetchDate(
                         buffer[AlcodiProtocol.INDEX_RELEASE_YEAR],
@@ -137,7 +141,7 @@ class AlcodiDriver(val device: UsbDevice) : BaseDriver<AlcodiData>(device) {
                     with(alcodiDeviceInfo) {
                         this.vendorId = getVendorId()
                         this.productId = getProductId()
-                        this.serialNumber = serialNumber
+                        this.serialNumber = serial
                         this.productCode = productCode.toString()
                         this.countryCode = countryCode
                         this.modelNumber = modelNumber
