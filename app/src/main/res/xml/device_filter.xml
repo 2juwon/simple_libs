@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--alcheck-->
+    <usb-device
+        product-id="0x5750"
+        vendor-id="0x0483" />
+    <usb-device
+        product-id="0x5751"
+        vendor-id="0x0483" />
+
+    <!--alcodi-->
+    <usb-device
+        product-id="0xF5F1"
+        vendor-id="0x04D8" />
+</resources>

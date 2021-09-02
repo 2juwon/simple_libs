@@ -10,7 +10,7 @@ interface IDriver {
     /**
      * open device
      */
-    fun open(usbDeviceConnection: UsbDeviceConnection)
+    fun open(usbDeviceConnection: UsbDeviceConnection): Boolean
 
     /**
      * write data. android -> device

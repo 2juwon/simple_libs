@@ -12,7 +12,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 
-fun Fragment.showToast(resID: Int) {
+fun Fragment.showToast(@StringRes resID: Int) {
     Toast.makeText(requireContext(), resID, Toast.LENGTH_SHORT).show()
 }
 

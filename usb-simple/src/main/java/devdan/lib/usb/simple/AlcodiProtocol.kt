@@ -83,12 +83,21 @@ class AlcodiProtocol {
         /**
          * (Lo Byte)0x55 => 85, (Hi Byte)0x01 => 256 일때, (1*256)+85 = 00341 일련번호
          */
-        fun fetchSerialNumber(low: Byte, middle: Byte, high: Byte, vendor: Byte): String {
-            val vendorYear = String.format("%03d", vendor.toPositiveInt())
-            val productionNumber = String.format("%03d", high.toPositiveInt())
-            val serial =
-                String.format("%05d", ((middle.toPositiveInt() * 256) + low.toPositiveInt()))
-            return "$vendorYear$productionNumber$serial"
+        fun fetchSerialNumber(low: Byte, middle: Byte): String {
+            return String.format("%05d", ((middle.toPositiveInt() * 256) + low.toPositiveInt()))
+        }
+
+        fun fetchVendorYear(data: Byte): String {
+            return String.format("%02d", data.toPositiveInt())
+        }
+
+        fun fetchProductionNumber(high: Byte): String {
+            val number = high.toPositiveInt()
+            return if(number < 10) {
+                String.format("%02d", number)
+            } else {
+                number.toString()
+            }
         }
 
         /**

@@ -133,4 +133,5 @@ class UsbConnector private constructor(private val context: Context) {
 interface OnUsbConnectListener {
     fun onConnect(driver: IDriver)
     fun onDisconnect()
+    fun onConnectError()
 }
