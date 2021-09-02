@@ -5,7 +5,6 @@ import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbEndpoint
 import android.hardware.usb.UsbInterface
 import kotlinx.coroutines.*
-import java.io.IOException
 
 abstract class BaseDriver<REC_DATA>(private val usbDevice: UsbDevice) : IDriver {
     var readEndPoint: UsbEndpoint? = null
@@ -22,24 +21,29 @@ abstract class BaseDriver<REC_DATA>(private val usbDevice: UsbDevice) : IDriver 
         }
     }
 
-    override fun open(usbDeviceConnection: UsbDeviceConnection) {
+    override fun open(usbDeviceConnection: UsbDeviceConnection): Boolean {
         this.connection = usbDeviceConnection
         for (i in 0 until usbDevice.interfaceCount) {
             val usbIface = usbDevice.getInterface(i)
             if (!connection!!.claimInterface(usbIface, true)) {
-                throw IOException("Could not claim data interface")
+                return false
             }
         }
 
         this.usbInterface = usbDevice.getInterface(usbDevice.interfaceCount - 1)
-        openInterface(usbInterface!!)
+        return if (usbInterface != null) {
+            openInterface(usbInterface!!)
+            true
+        } else {
+            false
+        }
     }
 
     override fun close() {
         stop()
 
         connection?.let {
-            it.releaseInterface(usbInterface)
+            usbInterface?.let { usb -> it.releaseInterface(usb) }
             it.close()
         }
     }
