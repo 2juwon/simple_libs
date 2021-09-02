@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -25,6 +26,7 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment() {
 
     protected abstract fun initObserver(view: View)
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -42,7 +44,7 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment() {
 
         getVariables().entries.forEach {
             binding.setVariable(it.key, it.value)
-            if(it.value is BaseViewModel) {
+            if (it.value is BaseViewModel) {
                 (it.value as BaseViewModel).let { viewModel ->
                     viewModel.hideKeyboardEvent.observe(viewLifecycleOwner, {
                         hideKeyboard()
@@ -66,10 +68,9 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment() {
         super.onDestroyView()
 
         if (::binding.isInitialized) binding.unbind()
-
     }
 
-    protected fun navigate(resId: Int) {
+    protected fun navigate(@IdRes resId: Int) {
         findNavController().navigate(resId)
     }
 

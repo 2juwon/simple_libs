@@ -32,7 +32,6 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
 
     private fun performDataBinding() {
         performViewDataBinding()
-//        performAppBarDataBinding()
     }
 
     private fun performViewDataBinding() {
@@ -44,36 +43,8 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
         binding.executePendingBindings()
     }
 
-//    private fun performAppBarDataBinding() {
-//        val appBarBinding: AppBarBinding
-//        try {
-//            val appBarField = binding.javaClass.getField("appbarLayout")
-//            appBarBinding = appBarField.get(binding) as AppBarBinding
-//            setSupportActionBar(appBarBinding.toolbar)
-//        }
-//        catch (e: Exception) {
-//
-//        }
-//    }
-
     override fun onDestroy() {
         super.onDestroy()
         if (::binding.isInitialized) binding.unbind()
     }
-
-//    protected fun startActivity(activity: Class<*>) {
-//        startActivity(Intent(this, activity))
-//        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-//    }
-//
-//    protected fun startActivityWithFinish(activity: Class<*>) {
-//        startActivityWithFinish(Intent(this, activity))
-//        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-//    }
-//
-//    protected fun startActivityWithFinish(intent: Intent) {
-//        startActivity(intent)
-//        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-//        finish()
-//    }
 }
