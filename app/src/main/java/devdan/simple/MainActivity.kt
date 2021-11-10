@@ -11,6 +11,8 @@ import androidx.activity.viewModels
 import androidx.lifecycle.ViewModel
 import devdan.lib.usb.simple.*
 import devdan.libs.base.activity.BaseActivity
+import devdan.libs.base.recyclerview.BaseRecyclerViewAdapter
+import devdan.libs.base.recyclerview.ViewHolderDataViewBinding
 import devdan.simple.databinding.ActivityMainBinding
 
 class MainActivity : BaseActivity<ActivityMainBinding>(), OnUsbConnectListener {

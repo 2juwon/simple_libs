@@ -1,23 +1,36 @@
 package devdan.lib.usb.simple
 
+import android.content.Context
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbEndpoint
 import android.hardware.usb.UsbInterface
 import kotlinx.coroutines.*
 
-abstract class BaseDriver<REC_DATA>(private val usbDevice: UsbDevice) : IDriver {
+abstract class BaseDriver<REC_DATA>(private val context: Context, private val usbDevice: UsbDevice) : IDriver {
     var readEndPoint: UsbEndpoint? = null
     var writeEndPoint: UsbEndpoint? = null
 
     var connection: UsbDeviceConnection? = null
     var usbInterface: UsbInterface? = null
 
+    protected var readListener: ReadListener<REC_DATA>? = null
+        private set
+
     protected val scope = CoroutineScope(Dispatchers.IO + Job())
+
+    fun setReadListener(listener: ReadListener<REC_DATA>) {
+        this.readListener = listener
+    }
+
+    fun removeReadListener() {
+        readListener = null
+    }
 
     fun writeAsync(buffer: ByteArray) {
         scope.launch {
-            write(buffer)
+            val result = write(buffer)
+            showLog(context, "USB", "WRITE : ${buffer.size} / ${buffer[0]} / $result")
         }
     }
 
@@ -65,6 +78,7 @@ abstract class ReadBaseTaskFactory<T>(
 
     private val syncObject = Object()
 
+    @DelicateCoroutinesApi
     fun start() {
         stop()
 

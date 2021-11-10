@@ -83,7 +83,7 @@ class UsbConnector private constructor(private val context: Context) {
         val connection = _usbManager.openDevice(device)
         if (connection != null) {
             if (device.productId == AlcodiDriver.PRODUCT_ID) {
-                driver = AlcodiDriver(device).also {
+                driver = AlcodiDriver(context, device).also {
                     it.open(connection)
                     it.getDriverInfo()
                     _connectListeners.forEach { listener ->

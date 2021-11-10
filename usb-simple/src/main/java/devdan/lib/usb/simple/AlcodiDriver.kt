@@ -11,7 +11,7 @@ import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class AlcodiDriver(val device: UsbDevice) : BaseDriver<AlcodiData>(device) {
+class AlcodiDriver(val context: Context, val device: UsbDevice) : BaseDriver<AlcodiData>(context, device) {
 
     companion object {
         const val PRODUCT_ID = AlcodiProtocol.PRODUCT_ID
@@ -25,16 +25,6 @@ class AlcodiDriver(val device: UsbDevice) : BaseDriver<AlcodiData>(device) {
 
     val alcodiDeviceInfo: AlcodiDeviceInfo = AlcodiDeviceInfo()
     private lateinit var stateCheckTimer: Timer
-
-    private var _readListener: ReadListener<AlcodiData>? = null
-
-    fun setReadListener(listener: ReadListener<AlcodiData>) {
-        _readListener = listener
-    }
-
-    fun removeReadListener() {
-        _readListener = null
-    }
 
     override fun openInterface(usbInterface: UsbInterface) {
         for (i in 0 until usbInterface.endpointCount) {
@@ -51,16 +41,16 @@ class AlcodiDriver(val device: UsbDevice) : BaseDriver<AlcodiData>(device) {
 
     override suspend fun write(buffer: ByteArray): Int = suspendCoroutine { cont ->
         connection?.let {
-//            val bytes = it.controlTransfer(
-//                0x21, 0x09, 0x03, 0x00, buffer, buffer.size,
-//                AlcodiProtocol.SEND_TIMEOUT
-//            )
-            val bytes = it.bulkTransfer(
-                writeEndPoint,
-                buffer,
-                buffer.size,
+            val bytes = it.controlTransfer(
+                0x21, 0x09, 0x03, 0x00, buffer, buffer.size,
                 AlcodiProtocol.SEND_TIMEOUT
             )
+//            val bytes = it.bulkTransfer(
+//                writeEndPoint,
+//                buffer,
+//                buffer.size,
+//                AlcodiProtocol.SEND_TIMEOUT
+//            )
             cont.resume(bytes)
         }
     }
@@ -186,7 +176,7 @@ class AlcodiDriver(val device: UsbDevice) : BaseDriver<AlcodiData>(device) {
             this,
             AlcodiProtocol.RECEIVE_BYTE_SIZE,
             AlcodiProtocol.READ_TIMEOUT,
-            _readListener
+            readListener
         ) {
         override fun parsingData(buffer: ByteArray): DeviceOutput<AlcodiData>? {
             val stateCode = buffer[AlcodiProtocol.INDEX_STATE_CODE]

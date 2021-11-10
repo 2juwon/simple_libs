@@ -7,6 +7,8 @@ abstract class ThreadTask<T1, T2> : Runnable {
     // Result
     private var _result: T2? = null
 
+    private var _thread: Thread? = null
+
     // Execute
     fun execute(arg: T1) {
         // Store the argument
@@ -16,12 +18,12 @@ abstract class ThreadTask<T1, T2> : Runnable {
         onPreExecute()
 
         // Begin thread work
-        val thread = Thread(this)
-        thread.start()
+        _thread = Thread(this)
+        _thread?.start()
 
         // Wait for the thread work
         try {
-            thread.join()
+            _thread?.join()
         } catch (e: InterruptedException) {
             e.printStackTrace()
             onPostExecute(null)
@@ -30,6 +32,7 @@ abstract class ThreadTask<T1, T2> : Runnable {
 
         // Call onPostExecute
         onPostExecute(_result)
+        _thread = null
     }
 
     override fun run() {
@@ -37,7 +40,7 @@ abstract class ThreadTask<T1, T2> : Runnable {
     }
 
     fun stop() {
-
+        _thread?.interrupt()
     }
 
     // onPreExecute
