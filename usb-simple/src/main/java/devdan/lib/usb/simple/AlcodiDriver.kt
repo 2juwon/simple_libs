@@ -4,6 +4,7 @@ import android.content.Context
 import android.hardware.usb.UsbConstants
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbInterface
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -11,17 +12,14 @@ import java.util.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class AlcodiDriver(val context: Context, val device: UsbDevice) : BaseDriver<AlcodiData>(context, device) {
+class AlcodiDriver(val context: Context, val device: UsbDevice) :
+    BaseDriver<AlcodiData>(context, device) {
 
     companion object {
         const val PRODUCT_ID = AlcodiProtocol.PRODUCT_ID
     }
 
-    private val factory: ReadTaskFactory by lazy {
-        ReadTaskFactory()
-    }
-    private var deviceState: Byte? = null
-        get() = if (field == null) AlcodiProtocol.STATE_CODE_WAIT else field
+    private var factory: ReadTaskFactory? = null
 
     val alcodiDeviceInfo: AlcodiDeviceInfo = AlcodiDeviceInfo()
     private lateinit var stateCheckTimer: Timer
@@ -41,16 +39,16 @@ class AlcodiDriver(val context: Context, val device: UsbDevice) : BaseDriver<Alc
 
     override suspend fun write(buffer: ByteArray): Int = suspendCoroutine { cont ->
         connection?.let {
-            val bytes = it.controlTransfer(
-                0x21, 0x09, 0x03, 0x00, buffer, buffer.size,
-                AlcodiProtocol.SEND_TIMEOUT
-            )
-//            val bytes = it.bulkTransfer(
-//                writeEndPoint,
-//                buffer,
-//                buffer.size,
+//            val bytes = it.controlTransfer(
+//                0x21, 0x09, 0x03, 0x00, buffer, buffer.size,
 //                AlcodiProtocol.SEND_TIMEOUT
 //            )
+            val bytes = it.bulkTransfer(
+                writeEndPoint,
+                buffer,
+                buffer.size,
+                AlcodiProtocol.SEND_TIMEOUT
+            )
             cont.resume(bytes)
         }
     }
@@ -144,14 +142,14 @@ class AlcodiDriver(val context: Context, val device: UsbDevice) : BaseDriver<Alc
         }
     }
 
+    @DelicateCoroutinesApi
     private fun startRead() {
-        factory.start()
+        factory = ReadTaskFactory().also { it.start() }
     }
 
     private fun stopRead() {
-        factory.stop()
+        factory?.stop()
         removeReadListener()
-        deviceState = null
     }
 
     private fun startSendTask() {
@@ -178,6 +176,9 @@ class AlcodiDriver(val context: Context, val device: UsbDevice) : BaseDriver<Alc
             AlcodiProtocol.READ_TIMEOUT,
             readListener
         ) {
+        private var deviceState: Byte? = null
+            get() = if (field == null) AlcodiProtocol.STATE_CODE_WAIT else field
+
         override fun parsingData(buffer: ByteArray): DeviceOutput<AlcodiData>? {
             val stateCode = buffer[AlcodiProtocol.INDEX_STATE_CODE]
 

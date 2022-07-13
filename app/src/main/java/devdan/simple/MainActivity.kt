@@ -80,36 +80,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), OnUsbConnectListener {
     override fun onConnect(driver: IDriver) {
         if (driver is AlcodiDriver) {
             _viewModel.setUsbDriver(driver)
-            initUsbDataManager()
         } else {
             _viewModel.setUsbDriver(null)
             showToast("???")
         }
     }
-
-    private fun initUsbDataManager() {
-        _viewModel.usbDriver?.run {
-            setReadListener(object : ReadListener<AlcodiData> {
-                override fun onNewData(data: AlcodiData) {
-                    showLog(application, "AD", data.toString())
-                    _viewModel.updateUiForState(data)
-                }
-
-                override fun onComplete() {
-                    stop()
-                }
-
-                override fun onError(err: Throwable) {
-                    showLog(application, "RBTask", "err is $err")
-                }
-
-            })
-
-            start()
-            writeAsync(AlcodiProtocol.REQUEST_START)
-        }
-    }
-
 
     override fun onDisconnect() {
         _viewModel.disconnectUsb()

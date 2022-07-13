@@ -2,9 +2,7 @@ package devdan.simple
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
-import devdan.lib.usb.simple.AlcodiData
-import devdan.lib.usb.simple.AlcodiDriver
-import devdan.lib.usb.simple.AlcodiProtocol
+import devdan.lib.usb.simple.*
 import devdan.libs.base.viewmodel.BaseViewModel
 
 class MainViewModel(application: Application) : BaseViewModel(application) {
@@ -15,7 +13,7 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
     val bac: MutableLiveData<Double> = MutableLiveData()
 
     var usbDriver: AlcodiDriver? = null
-    private set
+        private set
 
     private fun setSerialNumber(serial: String?) {
         serialNumber.value = serial
@@ -45,6 +43,25 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
 
         setSerialNumber(driver?.alcodiDeviceInfo?.serialNumber)
         setBlowCount(driver?.alcodiDeviceInfo?.useCount)
+
+        usbDriver?.run {
+            setReadListener(object : ReadListener<AlcodiData> {
+                override fun onNewData(data: AlcodiData) {
+                    showLog(getApplication(), "AD", data.toString())
+                    updateUiForState(data)
+                }
+
+                override fun onComplete() {
+                    stop()
+                }
+
+                override fun onError(err: Throwable) {
+                    showLog(getApplication(), "RBTask", "err is $err")
+                }
+            })
+
+            start()
+        }
     }
 
     fun updateConnect(isConnect: Boolean) {
@@ -84,5 +101,13 @@ class MainViewModel(application: Application) : BaseViewModel(application) {
         updateConnect(false)
         usbDriver?.stop()
         init()
+    }
+
+    fun onClickStart() {
+        usbDriver?.start()
+    }
+
+    fun onClickStop() {
+        usbDriver?.stop()
     }
 }

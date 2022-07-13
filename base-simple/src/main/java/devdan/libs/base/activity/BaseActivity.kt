@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
+import devdan.libs.base.extensions.hideKeyboard
 import devdan.libs.base.extensions.setStatusWhite
+import devdan.libs.base.viewmodel.BaseViewModel
 
 abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
     protected lateinit var binding: VB
@@ -14,7 +16,7 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
     @LayoutRes
     protected abstract fun getLayoutId(): Int
 
-    protected abstract fun getVariables(): Map<Int, ViewModel>
+    protected abstract fun getVariables(): Map<Int, ViewModel>?
 
     protected abstract fun initObserver()
 
@@ -36,8 +38,15 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
 
     private fun performViewDataBinding() {
         binding = DataBindingUtil.setContentView(this, getLayoutId())
-        getVariables().entries.forEach {
+        getVariables()?.entries?.forEach {
             binding.setVariable(it.key, it.value)
+            if (it.value is BaseViewModel) {
+                (it.value as BaseViewModel).let { viewModel ->
+                    viewModel.hideKeyboardEvent.observe(this, {
+                        hideKeyboard()
+                    })
+                }
+            }
         }
         binding.lifecycleOwner = this
         binding.executePendingBindings()

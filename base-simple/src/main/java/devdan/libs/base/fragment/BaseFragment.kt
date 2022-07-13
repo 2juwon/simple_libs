@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import devdan.libs.base.extensions.hideKeyboard
+import devdan.libs.base.extensions.navigateSafe
 import devdan.libs.base.viewmodel.BaseViewModel
 
 abstract class BaseFragment<VB : ViewDataBinding> : Fragment() {
@@ -22,7 +23,7 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment() {
     @LayoutRes
     protected abstract fun getLayoutId(): Int
 
-    protected abstract fun getVariables(): Map<Int, ViewModel>
+    protected abstract fun getVariables(): Map<Int, ViewModel>?
 
     protected abstract fun initObserver(view: View)
 
@@ -42,7 +43,7 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        getVariables().entries.forEach {
+        getVariables()?.entries?.forEach {
             binding.setVariable(it.key, it.value)
             if (it.value is BaseViewModel) {
                 (it.value as BaseViewModel).let { viewModel ->
@@ -76,5 +77,13 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment() {
 
     protected fun navigate(navDirections: NavDirections) {
         findNavController().navigate(navDirections)
+    }
+
+    protected fun navigateSafe(@IdRes resId: Int) {
+        findNavController().navigateSafe(resId)
+    }
+
+    protected fun navigateSafe(navDirections: NavDirections) {
+        findNavController().navigateSafe(navDirections)
     }
 }

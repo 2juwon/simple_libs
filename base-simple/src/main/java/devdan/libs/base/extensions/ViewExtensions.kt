@@ -3,6 +3,7 @@ package devdan.libs.base.extensions
 import android.content.ContextWrapper
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.AndroidViewModel
 
 fun View.getParentActivity(): AppCompatActivity? {
     var context = this.context

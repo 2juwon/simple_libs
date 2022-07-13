@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_shoot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Shoot" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_rps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="rps : 0"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_shoot"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="shoot count : 0"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/text_tick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="time : 0"/>
+</androidx.appcompat.widget.LinearLayoutCompat>

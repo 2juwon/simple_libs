@@ -174,5 +174,19 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:background="#e5e5e5" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> viewModel.onClickStart()}"
+            android:text="start" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> viewModel.onClickStop()}"
+            android:text="stop" />
     </LinearLayout>
 </layout>

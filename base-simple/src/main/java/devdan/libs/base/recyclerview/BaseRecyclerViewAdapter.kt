@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.ListAdapter
 abstract class BaseRecyclerViewAdapter<T, VH : ViewHolderDataViewBinding<T>>(
     callback: DiffUtil.ItemCallback<T>,
     private val binding: ViewDataBinding
-
 ) : ListAdapter<T, VH>(callback) {
 
     init {
@@ -15,6 +14,8 @@ abstract class BaseRecyclerViewAdapter<T, VH : ViewHolderDataViewBinding<T>>(
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        holder.bind(currentList[position])
+        getItem(position)?.let { item ->
+            holder.bind(item)
+        }
     }
 }

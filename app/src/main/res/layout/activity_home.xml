@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/button_usb_sample"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="USB Sample" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/button_camera_capture_sample"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Camera Capture Sample" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/button_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TEST" />
+</androidx.appcompat.widget.LinearLayoutCompat>
